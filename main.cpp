@@ -3,7 +3,7 @@
 
 void myinit() //set attributes
 {
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f); 
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f); 
     glColor3f(1.0f, 0.0f, 1.0f);         
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -33,17 +33,20 @@ void Draw_Figure()
 void display()
 {
     Draw_Figure();
-    glFlush(); //   glutSwapBuffers();
+    glutSwapBuffers();
 }
 
 void myIdleFunc(){
     glutPostRedisplay();
 }
+void keyDown(int key , int x , int y){
+
+}
 
 int main(int argc, char **argv)
 {
     glutInit(&argc, argv);                       
-    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB); // GLUT_DOUBLE
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB); // GLUT_DOUBLE
     glutInitWindowSize(600, 600); 
     glutInitWindowPosition(0, 0); 
     glutCreateWindow("");
@@ -51,13 +54,13 @@ int main(int argc, char **argv)
     glutDisplayFunc(display); 
     
     glutIdleFunc(myIdleFunc);
-    glutTimerFunc(50,myTimer,0);    // mili seconds , myTimer(int value), value
-    glutKeyboardFunc(myKeyboardFunc); // myKeyboardFunc(unsigned char key , int x , int y)
-    glutMouseFunc(myMouse); //  myMouse(int button , int state , int x , int y)
+    // glutTimerFunc(50,myTimer,0);    // mili seconds , myTimer(int value), value
+    // glutKeyboardFunc(myKeyboardFunc); // myKeyboardFunc(unsigned char key , int x , int y)
+    // glutMouseFunc(myMouse); //  myMouse(int button , int state , int x , int y)
     glutSpecialFunc(keyDown);   // keyDown(int key , int x , int y)
-    glutSpecialUpFunc(keyUp);   // keyUp(int key , int x , int y)
+    // glutSpecialUpFunc(keyUp);   // keyUp(int key , int x , int y)
     glutPostRedisplay();
-    glutReshapeFunc(myReshape);
+    // glutReshapeFunc(myReshape);
 
     myinit(); 
     glutMainLoop(); 
