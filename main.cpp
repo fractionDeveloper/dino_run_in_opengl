@@ -12,9 +12,29 @@ void Draw_Figure()
     glClear(GL_COLOR_BUFFER_BIT);
     glColor3f(0.0, 0.0, 0.0);
 
+    // float dinoEye[2] = {13,13,12,12}
+    glPointSize(5.0);
+    glBegin(GL_POINTS);
+    glVertex2d(8 ,12);
+    glEnd();
+
     glPointSize(10.0);
     glBegin(GL_POINTS);
     glVertex2d(mX, mY);
+    glEnd();
+
+float dinoPoints[2][32] = {{6,6,7,7,5,5,3,3,4,4,2,2,0,2,3,5,7,7,13,13,9,9,12,12,8,8,10,10,9,9,8,8},
+                              {3,1,1,0,0,3,3,1,1,0,0,3,6,9,7,7,10,13,13,11,11,10,10,9,9,8,8,6,6,7,7,5}};
+    glBegin(GL_LINE_LOOP);
+        for(int i=0;i<32;i++){
+            glVertex2f(dinoPoints[0][i] , dinoPoints[1][i]);
+        }
+        // glVertex2d(6,3);
+        // glVertex2d(6,1);
+        // glVertex2d(7,1);
+        // glVertex2d(7,0);
+        // glVertex2d(5,0);
+        // glVertex2d(5,3);
     glEnd();
 
     // glPushMatrix();
@@ -23,6 +43,12 @@ void Draw_Figure()
     // glRotatef(25.0, 0.0, 0.0, 1.0);
     // glutSolidCube(0.5);
     // glPopMatrix();
+}
+
+
+void dinoPixels(){
+    float dinoPoints[2][33] = {{3.5,3.5,4,4,3,3,1,2,2.5,4,5,5,9,9,7,7,8.5,8.5,6,6,7,7,6.5,6.5,6,6,5.5,5.5,7,7,5,5,3.5},
+                              {3,1.5,1.5,1,1,3.5,6,10,7,7,9,11,11,9,9,8.5,8.5,8,8,7,7,6,6,6.5,6.5,4.5,3,1,1,0.5,0.5,3,3}};
 }
 
 void display()
@@ -52,7 +78,7 @@ void myIdleFunc()
         mY = VY * time + 0.5 * (-10) * time * time;
     }
     else{
-        glutIdleFunc(dontDoAnythingIdle);
+        glutIdleFunc(dontDoAnythingIdle);   // 1 click == 1 jump
         time=0.1;
         mY=0;
     }
@@ -76,7 +102,7 @@ void myinit() //set attributes
     glColor3f(1.0f, 0.0f, 1.0f);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(-10, 50, -10, 50);
+    gluOrtho2D(-10, 100, -10, 100);
     glMatrixMode(GL_MODELVIEW);
 }
 
