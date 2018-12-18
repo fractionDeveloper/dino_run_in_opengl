@@ -5,6 +5,7 @@
 void drawGround();
 void myTimer(int);
 void myTimerDoNothing(int);
+void jumpFunc();
 
 #define PI 3.1415
 #define theta 90.0f
@@ -19,6 +20,9 @@ float tempDinoPoints[2][32] = {{6, 6, 7, 7, 5, 5, 3, 3, 4, 4, 2, 2, 0, 2, 3, 5, 
                                {3, 1, 1, 0, 0, 3, 3, 1, 1, 0, 0, 3, 6, 9, 7, 7, 10, 13, 13, 11, 11, 10, 10, 9, 9, 8, 8, 6, 6, 7, 7, 5}};
 float dinoEye[2] = {8, 12};
 float tempDinoEye[2] = {8, 12};
+
+
+float dinoRunningLegs = false;
 void Draw_Figure()
 {
     glClear(GL_COLOR_BUFFER_BIT);
@@ -48,6 +52,24 @@ void Draw_Figure()
     // glVertex2d(5,3);
     glEnd();
 
+    if(startGame && mY<=0 && dinoRunningLegs){
+        glBegin(GL_POLYGON);
+            glVertex2f(5,1);
+            glVertex2f(7,1);
+            glVertex2f(7,0);
+            glVertex2f(5,0);
+        glEnd();
+        glBegin(GL_POLYGON);
+            glVertex2f(2,1);
+            glVertex2f(4,1);
+            glVertex2f(4,0);
+            glVertex2f(2,0);
+        glEnd();
+        dinoRunningLegs = false;
+    }
+    else{
+        dinoRunningLegs = true;
+    }
     // glPushMatrix();
     // glLoadIdentity();
     // glTranslatef(0.5, 0.5, 0.0);
@@ -95,7 +117,8 @@ void display()
     glutSwapBuffers();
 }
 
-int V = 20;
+int V = 25;
+int gravity = -10;
 
 float VX = V * cos(theta * PI / 180);
 float VY = V * sin(theta * PI / 180);
@@ -107,7 +130,11 @@ void dontDoAnythingIdle()
 void myIdleFunc()
 {
 
-    // glutPostRedisplay();
+    if (startGame)
+    {
+        jumpFunc();
+        glutPostRedisplay();
+    }
 }
 
 bool jump = false;
@@ -118,7 +145,7 @@ void jumpFunc(){
         {
             time = time + 0.05;
             // mX = VX * time;
-            mY = VY * time + 0.5 * (-10) * time * time;
+            mY = VY * time + 0.5 * (gravity) * time * time;
 
             // printf("%f--\n", mY);
             for (int i = 0; i < 32; i++)
@@ -163,8 +190,8 @@ void keyDown(int key, int x, int y)
         if (startGame)
         {
             jump=true;
-            glutTimerFunc(50, myTimer, 0);
-            // glutIdleFunc(myIdleFunc);
+            // glutTimerFunc(50, myTimer, 0);
+            glutIdleFunc(myIdleFunc);
         }
         else
         {
@@ -203,7 +230,7 @@ int main(int argc, char **argv)
     // glutMouseFunc(myMouse); //  myMouse(int button , int state , int x , int y)
     glutSpecialFunc(keyDown); // keyDown(int key , int x , int y)
     // glutSpecialUpFunc(keyUp);   // keyUp(int key , int x , int y)
-    glutPostRedisplay();
+    // glutPostRedisplay();
     // glutReshapeFunc(myReshape);
 
     myinit();
