@@ -6,6 +6,7 @@ void drawGround();
 void myTimer(int);
 void myTimerDoNothing(int);
 void jumpFunc();
+void dontDoAnythingIdle();
 
 #define PI 3.1415
 #define theta 90.0f
@@ -13,7 +14,7 @@ void jumpFunc();
 bool startGame = false;
 
 float mX = 0;
-float mY = 0;
+float dinoVerticalPosition = 0;
 float dinoPoints[2][32] = {{6, 6, 7, 7, 5, 5, 3, 3, 4, 4, 2, 2, 0, 2, 3, 5, 7, 7, 13, 13, 9, 9, 12, 12, 8, 8, 10, 10, 9, 9, 8, 8},
                            {3, 1, 1, 0, 0, 3, 3, 1, 1, 0, 0, 3, 6, 9, 7, 7, 10, 13, 13, 11, 11, 10, 10, 9, 9, 8, 8, 6, 6, 7, 7, 5}};
 float tempDinoPoints[2][32] = {{6, 6, 7, 7, 5, 5, 3, 3, 4, 4, 2, 2, 0, 2, 3, 5, 7, 7, 13, 13, 9, 9, 12, 12, 8, 8, 10, 10, 9, 9, 8, 8},
@@ -39,7 +40,7 @@ void Draw_Figure()
 
     // glPointSize(10.0);
     // glBegin(GL_POINTS);
-    // glVertex2d(mX, mY);
+    // glVertex2d(mX, dinoVerticalPosition);
     // glEnd();
 
     glBegin(GL_LINE_LOOP);
@@ -55,8 +56,9 @@ void Draw_Figure()
     // glVertex2d(5,3);
     glEnd();
 
-    if (startGame && mY <= 0 && dinoRunningLegs)
+    if (startGame && dinoVerticalPosition <= 0 && dinoRunningLegs)
     {
+        
         glBegin(GL_POLYGON);
         glVertex2f(5, 1);
         glVertex2f(7, 1);
@@ -113,17 +115,21 @@ void drawGround()
 
 void drawTree()
 {
+    if(treeLastPointPosition<=13 && treeLastPointPosition>=0  && dinoVerticalPosition < 13){
+        printf("tree inside dragon range value is = %d \n" , treeLastPointPosition);
+        glutIdleFunc(dontDoAnythingIdle);
+    }
     if (treeLastPointPosition < 0)
     {
         for (int i = 0; i < 16; i++)
         {
 
-            treePoints[0][i] += 128+1;
-            
+            treePoints[0][i] += 128 + 1;
+
             // treePoints[0][i] += 128;
-            printf("%.0f,", treePoints[0][i] );
+            // printf("%.0f,", treePoints[0][i]);
         }
-        printf("\n");
+        // printf("\n");
         treeLastPointPosition = 128;
     }
     glBegin(GL_LINE_LOOP);
@@ -132,10 +138,11 @@ void drawTree()
     {
         glVertex2f(treePoints[0][i], treePoints[1][i]);
         treePoints[0][i] += -1;
-        
+
         // treePoints[0][i] += 120;
         // printf("%.0f,", treePoints[0][i] );
-    }treeLastPointPosition--;
+    }
+    treeLastPointPosition--;
     glEnd();
 }
 
@@ -178,21 +185,21 @@ void jumpFunc()
 {
     if (jump)
     {
-        if (mY >= 0)
+        if (dinoVerticalPosition >= 0)
         {
             time = time + 0.05;
             // mX = VX * time;
-            mY = VY * time + 0.5 * (gravity)*time * time;
+            dinoVerticalPosition = VY * time + 0.5 * (gravity)*time * time;
 
-            // printf("%f--\n", mY);
+            // printf("%f--\n", dinoVerticalPosition);
             for (int i = 0; i < 32; i++)
             {
-                tempDinoPoints[1][i] = dinoPoints[1][i] + mY;
+                tempDinoPoints[1][i] = dinoPoints[1][i] + dinoVerticalPosition;
 
                 // printf("%f----\n",dinoPoints[1][i]);
             }
-            // tempDinoEye[0] = dinoEye[0]+mY;
-            tempDinoEye[1] = dinoEye[1] + mY;
+            // tempDinoEye[0] = dinoEye[0]+dinoVerticalPosition;
+            tempDinoEye[1] = dinoEye[1] + dinoVerticalPosition;
             // glutTimerFunc(50, myTimerDoNothing, 0);
         }
         else
@@ -200,7 +207,7 @@ void jumpFunc()
             // glutIdleFunc(dontDoAnythingIdle); // 1 click == 1 jump
             // glutTimerFunc(50, myTimer, 0);
             time = 0.1;
-            mY = 0;
+            dinoVerticalPosition = 0;
             jump = false;
         }
     }
