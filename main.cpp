@@ -18,7 +18,7 @@ void resetGame();
 bool startGame = false;
 bool gameRunning = false;
 
-int gameSpeed = -2;
+float gameSpeed = 1;
 int timerTime = 1;
 int score = 0;
 float mX = 0;
@@ -183,7 +183,7 @@ void drawGround()
         glVertex2f(groundDust[0][i], groundDust[1][i]);
         glVertex2f(groundDust[0][i] + 2, groundDust[1][i]);
         glVertex2f(groundDust[0][i] + 1, groundDust[1][i] - 1);
-        groundDust[0][i] += gameSpeed;
+        groundDust[0][i] += -gameSpeed;
     }
     glEnd();
 }
@@ -209,7 +209,7 @@ void drawTree()
     for (int i = 0; i < 16; i++)
     {
         glVertex2f(treePoints[0][i], treePoints[1][i]);
-        treePoints[0][i] += gameSpeed;
+        treePoints[0][i] += -gameSpeed;
 
         // treePoints[0][i] += 120;
         // printf("%.0f,", treePoints[0][i] );
@@ -244,6 +244,7 @@ void resetGame()
     memcpy(treePoints , tempTreePoints , sizeof treePoints);
     memcpy(tempDinoEye , dinoEye , sizeof tempDinoEye);
     score=0;
+    gameSpeed = 1;
 }
 
 void display()
@@ -284,7 +285,7 @@ void jumpFunc()
         dinoVerticalPosition = VY * time + 0.5 * (gravity ) * time * time;
         if (dinoVerticalPosition >= 0)
         {
-            time = time + (0.1)*(-gameSpeed);
+            time = time + (0.1)*(gameSpeed);
             // mX = VX * time;
 
             printf("%f--\n\n\n", dinoVerticalPosition);
@@ -319,9 +320,12 @@ void myTimer(int value)
         if (value % 10 == 0)
         {
 
-            score += (-gameSpeed);
-
+            score += gameSpeed*gameSpeed;
+            
             // printf("%d\n",value);
+        }
+        if(value%100==0){
+            gameSpeed += 0.1;
         }
     }
     glutTimerFunc(timerTime, myTimer, ++value);
