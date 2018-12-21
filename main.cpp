@@ -1,3 +1,4 @@
+
 #include <GL/glut.h>
 #include <math.h>
 #include <stdio.h>
@@ -9,15 +10,17 @@ void myTimer(int);
 void myTimerDoNothing(int);
 void jumpFunc();
 void dontDoAnythingIdle();
+void resetGame();
 
 #define PI 3.1415
 #define theta 90.0f
 
-
 bool startGame = false;
 bool gameRunning = false;
 
+int gameSpeed = -2;
 int timerTime = 1;
+int score = 0;
 float mX = 0;
 float dinoVerticalPosition = 0;
 float dinoPoints[2][32] = {{6, 6, 7, 7, 5, 5, 3, 3, 4, 4, 2, 2, 0, 2, 3, 5, 7, 7, 13, 13, 9, 9, 12, 12, 8, 8, 10, 10, 9, 9, 8, 8},
@@ -84,6 +87,21 @@ void Draw_Figure()
     {
         drawString(30.0, 50.0, 0.0, "Press Up Arrow to start game");
     }
+    else
+    {
+        //   std::string str = std::to_string(sco);
+        // std::string s = std::to_string(42);
+        // std::string str("Test string");
+        // std::string result;
+        char snum[10];
+        char scoreString[30] = "Score :: ";
+        // convert 123 to string [buf]
+        // itoa(score, snum, 10)
+        snprintf(snum, sizeof(snum), "%d", score);
+        strcat(scoreString, snum);
+
+        drawString(80.0, 90.0, 0.0, scoreString);
+    }
 
     // Set things up for normal rendering
     // endText();
@@ -142,6 +160,7 @@ void Draw_Figure()
 }
 
 float groundDust[2][3] = {{100, 130, 170}, {-2, -2, -2}};
+
 void drawGround()
 {
     glPointSize(2.0);
@@ -164,7 +183,7 @@ void drawGround()
         glVertex2f(groundDust[0][i], groundDust[1][i]);
         glVertex2f(groundDust[0][i] + 2, groundDust[1][i]);
         glVertex2f(groundDust[0][i] + 1, groundDust[1][i] - 1);
-        groundDust[0][i] += -1;
+        groundDust[0][i] += gameSpeed;
     }
     glEnd();
 }
@@ -172,25 +191,25 @@ void drawGround()
 void drawTree()
 {
 
-    if (treeLastPointPosition < 0)
+    if (treePoints[0][12] < -10)
     {
         for (int i = 0; i < 16; i++)
         {
 
-            treePoints[0][i] += 128 + 1;
+            treePoints[0][i] += 128;
 
             // treePoints[0][i] += 128;
             // printf("%.0f,", treePoints[0][i]);
         }
         // printf("\n");
-        treeLastPointPosition = 128;
+        treeLastPointPosition = 100;
     }
     glBegin(GL_LINE_LOOP);
 
     for (int i = 0; i < 16; i++)
     {
         glVertex2f(treePoints[0][i], treePoints[1][i]);
-        treePoints[0][i] += -1;
+        treePoints[0][i] += gameSpeed;
 
         // treePoints[0][i] += 120;
         // printf("%.0f,", treePoints[0][i] );
@@ -198,15 +217,16 @@ void drawTree()
     treeLastPointPosition--;
     glEnd();
 
-    if (treeLastPointPosition <= 13 && treeLastPointPosition >= 0 && dinoVerticalPosition < 13)
+    if (treePoints[0][12] <= 13 && treePoints[0][12] >= 0 && dinoVerticalPosition < 13)
     {
         // printf("tree inside dragon range value is = %d \n", treeLastPointPosition);
         // glutPostRedisplay();
         drawString(30.0, 50.0, 0.0, "Game Over press UP arrow to play again");
-        glutIdleFunc(dontDoAnythingIdle);
-        glutTimerFunc(0 , myTimerDoNothing , 0);
+        // glutIdleFunc(dontDoAnythingIdle);
+        glutTimerFunc(0, myTimerDoNothing, 0);
         gameRunning = false;
         startGame = false;
+        resetGame();
         // return;
     }
 }
@@ -215,18 +235,15 @@ void dinoPixels()
 {
 }
 
-void gameOverFunc()
+void resetGame()
 {
-    // glClear(GL_COLOR_BUFFER_BIT);
-    glColor3f(0.0, 0.0, 0.0);
-    glPushMatrix();
-    glLoadIdentity();
-    drawString(30.0, 50.0, 0.0, "Game Over press UP arrow to play again");
-    // glTranslatef(0.5, 0.5, 0.0);
-    // glRotatef(25.0, 0.0, 0.0, 1.0);
-    // glutSolidCube(0.5);
-    glPopMatrix();
-    glutSwapBuffers();
+    // tempDinoPoints = dinoPoints;
+    memcpy(tempDinoPoints, dinoPoints, sizeof tempDinoPoints);
+    float tempTreePoints[2][16] = {{125, 125, 122, 122, 123, 123, 125, 125, 128, 128, 130, 130, 131, 131, 128, 128},
+                           {0, 8, 8, 12, 12, 9, 9, 13, 13, 8, 8, 11, 11, 7, 7, 0}};
+    memcpy(treePoints , tempTreePoints , sizeof treePoints);
+    memcpy(tempDinoEye , dinoEye , sizeof tempDinoEye);
+    score=0;
 }
 
 void display()
@@ -264,13 +281,13 @@ void jumpFunc()
 {
     if (jump)
     {
-        dinoVerticalPosition = VY * time + 0.5 * (gravity)*time * time;
+        dinoVerticalPosition = VY * time + 0.5 * (gravity ) * time * time;
         if (dinoVerticalPosition >= 0)
         {
-            time = time + 0.1;
+            time = time + (0.1)*(-gameSpeed);
             // mX = VX * time;
 
-            // printf("%f--\n\n\n", dinoVerticalPosition);
+            printf("%f--\n\n\n", dinoVerticalPosition);
             for (int i = 0; i < 32; i++)
             {
                 tempDinoPoints[1][i] = dinoPoints[1][i] + dinoVerticalPosition;
@@ -299,8 +316,15 @@ void myTimer(int value)
     {
         jumpFunc();
         glutPostRedisplay();
+        if (value % 10 == 0)
+        {
+
+            score += (-gameSpeed);
+
+            // printf("%d\n",value);
+        }
     }
-    glutTimerFunc(timerTime, myTimer, 0);
+    glutTimerFunc(timerTime, myTimer, ++value);
 }
 void myTimerDoNothing(int value)
 {
