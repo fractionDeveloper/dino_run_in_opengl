@@ -85,7 +85,8 @@ void Draw_Figure()
     // Render the text
     if (!startGame)
     {
-        drawString(30.0, 50.0, 0.0, "Press Up Arrow to start game");
+        char* p = (char*)"Press Up Arrow to start game";
+        drawString(30.0, 50.0, 0.0, p);
     }
     else
     {
@@ -221,7 +222,8 @@ void drawTree()
     {
         // printf("tree inside dragon range value is = %d \n", treeLastPointPosition);
         // glutPostRedisplay();
-        drawString(30.0, 50.0, 0.0, "Game Over press UP arrow to play again");
+        char* p = (char*) "Game Over press UP arrow to play again";
+        drawString(30.0, 50.0, 0.0,p);
         // glutIdleFunc(dontDoAnythingIdle);
         glutTimerFunc(0, myTimerDoNothing, 0);
         gameRunning = false;
