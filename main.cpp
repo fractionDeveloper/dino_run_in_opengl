@@ -11,6 +11,11 @@ void myTimerDoNothing(int);
 void jumpFunc();
 void dontDoAnythingIdle();
 void resetGame();
+void drawString();
+void Draw_Figure();
+void drawGround();
+void drawTree();
+
 
 #define PI 3.1415
 #define theta 90.0f
@@ -42,7 +47,7 @@ void drawString(float x, float y, float z, char *string)
 
     for (char *c = string; *c != '\0'; c++)
     {
-        glutBitmapCharacter(GLUT_BITMAP_8_BY_13, *c); // Updates the position
+        glutBitmapCharacter(GLUT_BITMAP_9_BY_15, *c); // Updates the position
     }
 }
 
@@ -85,7 +90,7 @@ void Draw_Figure()
     // Render the text
     if (!startGame)
     {
-        char* p = (char*)"Press Up Arrow to start game";
+        char *p = (char *)"Press Up Arrow to start game";
         drawString(30.0, 50.0, 0.0, p);
     }
     else
@@ -222,8 +227,8 @@ void drawTree()
     {
         // printf("tree inside dragon range value is = %d \n", treeLastPointPosition);
         // glutPostRedisplay();
-        char* p = (char*) "Game Over press UP arrow to play again";
-        drawString(30.0, 50.0, 0.0,p);
+        char *p = (char *)"Game Over press UP arrow to play again";
+        drawString(30.0, 50.0, 0.0, p);
         // glutIdleFunc(dontDoAnythingIdle);
         glutTimerFunc(0, myTimerDoNothing, 0);
         gameRunning = false;
@@ -242,10 +247,10 @@ void resetGame()
     // tempDinoPoints = dinoPoints;
     memcpy(tempDinoPoints, dinoPoints, sizeof tempDinoPoints);
     float tempTreePoints[2][16] = {{125, 125, 122, 122, 123, 123, 125, 125, 128, 128, 130, 130, 131, 131, 128, 128},
-                           {0, 8, 8, 12, 12, 9, 9, 13, 13, 8, 8, 11, 11, 7, 7, 0}};
-    memcpy(treePoints , tempTreePoints , sizeof treePoints);
-    memcpy(tempDinoEye , dinoEye , sizeof tempDinoEye);
-    score=0;
+                                   {0, 8, 8, 12, 12, 9, 9, 13, 13, 8, 8, 11, 11, 7, 7, 0}};
+    memcpy(treePoints, tempTreePoints, sizeof treePoints);
+    memcpy(tempDinoEye, dinoEye, sizeof tempDinoEye);
+    score = 0;
     gameSpeed = 1;
 }
 
@@ -284,13 +289,13 @@ void jumpFunc()
 {
     if (jump)
     {
-        dinoVerticalPosition = VY * time + 0.5 * (gravity ) * time * time;
+        dinoVerticalPosition = VY * time + 0.5 * (gravity)*time * time;
         if (dinoVerticalPosition >= 0)
         {
-            time = time + (0.1)*(gameSpeed);
+            time = time + (0.1) * (gameSpeed);
             // mX = VX * time;
 
-            printf("%f--\n\n\n", dinoVerticalPosition);
+            // printf("%f--\n\n\n", dinoVerticalPosition);
             for (int i = 0; i < 32; i++)
             {
                 tempDinoPoints[1][i] = dinoPoints[1][i] + dinoVerticalPosition;
@@ -303,6 +308,8 @@ void jumpFunc()
         }
         else
         {
+            memcpy(tempDinoPoints, dinoPoints, sizeof tempDinoPoints);
+            memcpy(tempDinoEye, dinoEye, sizeof tempDinoEye);
             // glutIdleFunc(dontDoAnythingIdle); // 1 click == 1 jump
             // glutTimerFunc(timerTime, myTimer, 0);
             time = 0.1;
@@ -322,11 +329,12 @@ void myTimer(int value)
         if (value % 10 == 0)
         {
 
-            score += gameSpeed*gameSpeed;
-            
+            score += gameSpeed * gameSpeed;
+
             // printf("%d\n",value);
         }
-        if(value%100==0){
+        if (value % 100 == 0)
+        {
             gameSpeed += 0.1;
         }
     }
