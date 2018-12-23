@@ -23,7 +23,7 @@ void drawTree();
 bool startGame = false;
 bool gameRunning = false;
 
-float gameSpeed = 1;
+float gameSpeed = 2;
 int timerTime = 1;
 int score = 0;
 float mX = 0;
